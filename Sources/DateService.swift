@@ -25,26 +25,24 @@ extension DateFormatter: DateFormatterProtocol {
 }
 
 protocol DateServiceProtocol {
-    func getDate() -> String
-    func getAmzDate() -> String
+    func format(date: Date) -> String
+    func formatAmz(date: Date) -> String
 }
 
 class DateService: DateServiceProtocol {
-    internal var date: Date
     internal var amzDateFormatter: DateFormatterProtocol
     internal var dateFormatter: DateFormatterProtocol
 
-    init(date: Date, dateFormatter: DateFormatterProtocol, amzDateFormatter: DateFormatterProtocol) {
-        self.date = date
+    init(dateFormatter: DateFormatterProtocol, amzDateFormatter: DateFormatterProtocol) {
         self.dateFormatter = dateFormatter
         self.amzDateFormatter = amzDateFormatter
     }
     
-    func getDate() -> String {
+    func format(date: Date) -> String {
         return dateFormatter.string(from: date)
     }
     
-    func getAmzDate() -> String {
+    func formatAmz(date: Date) -> String {
         return amzDateFormatter.string(from: date)
     }
 }

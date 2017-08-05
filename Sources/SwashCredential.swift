@@ -16,15 +16,14 @@ public class SwawshCredential {
     
     public static let sharedInstance = SwawshCredential(
         dateService: DateService(
-            date: Date(),
             dateFormatter: DateFormatter.dateFormatterFactory(),
             amzDateFormatter: DateFormatter.amzDateFormatterFactory()
         ),
         digestService: DigestService()
     )
     
-    public func getDate() -> String {
-        return dateService.getAmzDate()
+    public func formatHeader(date: Date) -> String {
+        return dateService.formatAmz(date: date)
     }
     
     public func generateCredential(method: Method,
@@ -32,6 +31,7 @@ public class SwawshCredential {
                             endPoint: String,
                             queryParameters: String,
                             payloadDigest: String,
+                            date: Date,
                             region: String,
                             service: String,
                             accessKeyId: String,
@@ -42,8 +42,8 @@ public class SwawshCredential {
             resourcePath: path,
             endPoint: endPoint,
             queryParameters: queryParameters,
-            amzDate: dateService.getAmzDate(),
-            date: dateService.getDate(),
+            amzDate: dateService.formatAmz(date: date),
+            date: dateService.format(date: date),
             payloadHeaderKey: "",
             dateHeaderKey: "",
             payloadDigest: payloadDigest

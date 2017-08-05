@@ -7,12 +7,14 @@ http://docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-authenticating-requests.ht
 ### Ec2 Example (macOS)
 ```swift
 let swawsh = Swawsh.sharedInstance
+let requestDate = Date()
 let authorization = swawsh.generateCredential(
     method: .GET,
     path: "/",
     endPoint: "ec2.amazonaws.com",
     queryParameters: "Action=DescribeRegions&Version=2013-10-15",
     payloadDigest: Swawsh.emptyStringHash,
+    date: requestDate,
     region: "us-east-1",
     service: "ec2",
     accessKeyId: accessKeyId,
@@ -43,6 +45,7 @@ let uploadData = Data()
 let sha256 = Digest(using: .sha256)
 let digest = sha256.update(data: uploadData)?.final()
 let digestHexString = CryptoUtils.hexString(from: digest!)
+let requestDate = Date()
 
 let authorization = swawsh.generateCredential(
     method: .PUT,
@@ -50,6 +53,7 @@ let authorization = swawsh.generateCredential(
     endPoint: "s3.amazonaws.com",
     queryParameters: "",
     payloadDigest: digestHexString,
+    date: requestDate,
     region: "us-east-1",
     service: "s3",
     accessKeyId: accessKeyId,
@@ -60,7 +64,7 @@ let authorization = swawsh.generateCredential(
 let url = URL(string: "https://s3.amazonaws.com/my.awesome.bucket/text.txt")
 var request = URLRequest(url: url!)
 request.addValue(authorization!, forHTTPHeaderField: "Authorization")
-request.addValue(swawsh.getDate(), forHTTPHeaderField: "x-amz-date")
+request.addValue(swawsh.formatHeader(date: requestDate), forHTTPHeaderField: "x-amz-date")
 request.addValue(digestHexString, forHTTPHeaderField:"x-amz-content-sha256")
 request.setValue("multipart/form-data", forHTTPHeaderField: "Content-Type")
 request.httpMethod = "PUT"
